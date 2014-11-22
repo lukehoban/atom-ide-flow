@@ -4,6 +4,11 @@ path = require 'path'
 
 {TooltipView} = require './tooltip-view'
 
+isFlowSource = (editor) ->
+  if path.extname(editor.getPath()) is '.js'
+    return true
+  return false
+
 # pixel position from mouse event
 pixelPositionFromMouseEvent = (editorView, event) ->
   {clientX, clientY} = event
@@ -95,8 +100,7 @@ class EditorControl
 
   # get expression type under mouse cursor and show it
   showExpressionType: (e) ->
-    # TODO Check if it's a JS file and that it has Flow enabled??
-    #return unless isHaskellSource(@editor.getUri()) and not @exprTypeTooltip?
+    return unless isFlowSource(@editor) and not @exprTypeTooltip?
 
     pixelPt = pixelPositionFromMouseEvent(@editorView, e)
     screenPt = @editor.screenPositionForPixelPosition(pixelPt)
