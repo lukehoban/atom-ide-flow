@@ -6,6 +6,8 @@ path = require 'path'
 
 class EditorControl
   constructor: (@editorView, @manager) ->
+    @checkMarkers = []
+
     @editor = @editorView.getEditor()
     @gutter = @editorView.gutter
     @scroll = @editorView.find('.scroll-view')
@@ -91,5 +93,27 @@ class EditorControl
     if @exprTypeTooltip?
       @exprTypeTooltip.remove()
       @exprTypeTooltip = null
+
+  resultsUpdated: ->
+    @destroyMarkers()
+    @markerFromCheckResult(err) for err in @manager.checkResults
+    @renderResults()
+
+  destroyMarkers: ->
+    m.marker.destroy() for m in @checkMarkers
+    @checkMarkers = []
+
+  markerFromCheckResult: (err) ->
+    return unless err.path is @editor.getPath()
+    marker = @editor.markBufferRange [[err.line-1, err.start-1],[err.endline-1, err.end]], invalidate: 'never'
+    @checkMarkers.push({ marker, klass: 'ide-flow-error', desc: err.descr })
+
+  renderResults: ->
+    @decorateMarker(m) for m in @checkMarkers
+
+  decorateMarker: ({marker}) ->
+    @editor.decorateMarker marker, type: 'gutter', class: 'ide-flow-error'
+    @editor.decorateMarker marker, type: 'highlight', class: 'ide-flow-error'
+    @editor.decorateMarker marker, type: 'line', class: 'ide-flow-error'
 
 module.exports = { EditorControl }

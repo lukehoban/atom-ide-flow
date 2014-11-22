@@ -22,10 +22,30 @@ class PluginManager
     @controlSubscription = null
 
   check: ->
-    utilFlowCommand.check()
+    #utilFlowCommand.check()
 
-  typeAtPos: ({bufferPt, fileName, cwd,  onResult}) ->
-    utilFlowCommand.typeAtPos {fileName, bufferPt, onResult}
+    return if @checkTurnedOff? and @checkTurnedOff
+    fileName = atom.workspaceView.getActiveView()?.getEditor().getPath()
+    return unless fileName?
+
+    @outputView?.pendingCheck()
+
+    utilFlowCommand.check
+      fileName: fileName
+      onResult: (result) =>
+        @checkResults = result.errors.reduce ((sofar, x) -> sofar.concat x.message), []
+        @updateAllEditorViewsWithResults()
+
+  # Update every editor view with results
+  updateAllEditorViewsWithResults: ->
+    for editorView in atom.workspaceView.getEditorViews()
+      editorView.flowController?.resultsUpdated()
+
+  typeAtPos: ({bufferPt, fileName, cwd, onResult}) ->
+    utilFlowCommand.typeAtPos
+      fileName: fileName
+      bufferPt: bufferPt
+      onResult: onResult
 
 
 module.exports = { PluginManager }

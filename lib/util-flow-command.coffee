@@ -11,7 +11,11 @@ run = ({onMessage, onComplete, onFailure, args, cwd}) ->
     command: '/Users/lukeh/Downloads/flow/flow'
     args: args
     options: options
-    stdout: (line) -> stdout(onMessage, line)
+    stdout: (data) ->
+      console.debug data
+      onMessage data
+    stderr: (data) ->
+      console.debug data
     exit: -> onComplete?()
 
   # on error hack (from http://discuss.atom.io/t/catching-exceptions-when-using-bufferedprocess/6407)
@@ -34,16 +38,16 @@ module.exports =
       onMessage: (output) ->
     process
 
-  check: ->
-    editor = atom.workspace.activePaneItem
-    filename = editor.getPath()
-    dir = path.dirname filename
+  check: ({fileName, onResult, onComplete, onFailure, onDone})->
+    dir = path.dirname fileName
     if !@servers then @servers = {}
     if !@servers[dir] then @servers[dir] = @startServer()
     process = run
       args: [ '--json' ]
       cwd: dir
       onMessage: (output) ->
+        result = JSON.parse output
+        onResult result
 
   typeAtPos: ({fileName, bufferPt, onResult, onComplete, onFailure, onDone}) ->
     process = run
