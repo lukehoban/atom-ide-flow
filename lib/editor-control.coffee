@@ -37,16 +37,15 @@ class EditorControl
       @clearExprTypeTimeout()
 
     # mouse movement over gutter to show check results
-    # for klass in @className
-    #   @subscriber.subscribe @gutter, 'mouseenter', ".#{klass}", (e) =>
-    #     @showCheckResult e
-    #   @subscriber.subscribe @gutter, 'mouseleave', ".#{klass}", (e) =>
-    #     @hideCheckResult()
-    # @subscriber.subscribe @gutter, 'mouseleave', (e) =>
-    #   @hideCheckResult()
+    @subscriber.subscribe @gutter, 'mouseenter', ".ide-flow-error", (e) =>
+      @showCheckResult e
+    @subscriber.subscribe @gutter, 'mouseleave', ".ide-flow-error", (e) =>
+      @hideCheckResult()
+    @subscriber.subscribe @gutter, 'mouseleave', (e) =>
+      @hideCheckResult()
 
     # update all results from manager
-    #@resultsUpdated()
+    @resultsUpdated()
 
   deactivate: ->
     @clearExprTypeTimeout()
@@ -106,7 +105,7 @@ class EditorControl
   markerFromCheckResult: (err) ->
     return unless err.path is @editor.getPath()
     marker = @editor.markBufferRange [[err.line-1, err.start-1],[err.endline-1, err.end]], invalidate: 'never'
-    @checkMarkers.push({ marker, klass: 'ide-flow-error', desc: err.descr })
+    @checkMarkers.push({ marker, desc: err.descr })
 
   renderResults: ->
     @decorateMarker(m) for m in @checkMarkers
@@ -115,5 +114,37 @@ class EditorControl
     @editor.decorateMarker marker, type: 'gutter', class: 'ide-flow-error'
     @editor.decorateMarker marker, type: 'highlight', class: 'ide-flow-error'
     @editor.decorateMarker marker, type: 'line', class: 'ide-flow-error'
+
+    # show check result when mouse over gutter icon
+  showCheckResult: (e) ->
+    @hideCheckResult()
+    row = @editor.bufferPositionForScreenPosition(screenPositionFromMouseEvent(@editorView, e)).row
+
+    # find best result for row
+    foundResult = null
+    for {marker, desc} in @checkMarkers
+      if marker.getHeadBufferPosition().row is row
+        foundResult = desc
+        break
+
+    # append tooltip if result found
+    return unless foundResult?
+
+    # create show position
+    targetRect = e.currentTarget.getBoundingClientRect()
+    offset = @editorView.lineHeight * 0.3
+    rect =
+      left: targetRect.left - offset
+      right: targetRect.right + offset
+      top: targetRect.top - offset
+      bottom: targetRect.bottom + offset
+
+    @checkResultTooltip = new TooltipView(rect, foundResult)
+
+  hideCheckResult: ->
+    if @checkResultTooltip?
+      @checkResultTooltip.remove()
+      @checkResultTooltip = null
+
 
 module.exports = { EditorControl }

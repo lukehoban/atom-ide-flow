@@ -3,6 +3,7 @@ utilFlowCommand = require('./util-flow-command')
 
 class PluginManager
   constructor: () ->
+    @checkResults = []
     @subsribeEditorViewController()
 
   deactivate: () ->
@@ -33,7 +34,15 @@ class PluginManager
     utilFlowCommand.check
       fileName: fileName
       onResult: (result) =>
-        @checkResults = result.errors.reduce ((sofar, x) -> sofar.concat x.message), []
+        # Massage results
+        errors = result.errors.map ((parts) ->
+          err = parts.message[0]
+          err.descr = parts.message.reduce ((acc, x) ->
+            acc + " " + x.descr
+          ), ""
+          err
+        )
+        @checkResults = errors #result.errors.reduce ((sofar, x) -> sofar.concat x.message), []
         @updateAllEditorViewsWithResults()
 
   # Update every editor view with results
