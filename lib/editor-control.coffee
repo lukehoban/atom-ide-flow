@@ -89,7 +89,6 @@ class EditorControl
       onResult: (result) =>
         @exprTypeTooltip?.updateText(result.type)
 
-
   hideExpressionType: ->
     if @exprTypeTooltip?
       @exprTypeTooltip.remove()
