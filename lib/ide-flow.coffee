@@ -3,23 +3,7 @@
 path = require 'path'
 
 {TooltipView} = require './tooltip-view'
-
-isFlowSource = (editor) ->
-  if path.extname(editor.getPath()) is '.js'
-    return true
-  return false
-
-# pixel position from mouse event
-pixelPositionFromMouseEvent = (editorView, event) ->
-  {clientX, clientY} = event
-  linesClientRect = editorView.find('.lines')[0].getBoundingClientRect()
-  top = clientY - linesClientRect.top
-  left = clientX - linesClientRect.left
-  {top, left}
-
-# screen position from mouse event
-screenPositionFromMouseEvent = (editorView, event) ->
-  editorView.getModel().screenPositionForPixelPosition(pixelPositionFromMouseEvent(editorView, event))
+{ isFlowSource, pixelPositionFromMouseEvent, screenPositionFromMouseEvent } = require './utils'
 
 class PluginManager
   constructor: () ->
