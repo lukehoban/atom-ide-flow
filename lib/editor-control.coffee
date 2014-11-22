@@ -2,7 +2,7 @@ path = require 'path'
 {BufferedProcess} = require 'atom'
 {Subscriber} = require 'emissary'
 {TooltipView} = require './tooltip-view'
-{ isFlowSource, pixelPositionFromMouseEvent, screenPositionFromMouseEvent } = require './utils'
+{isFlowSource, pixelPositionFromMouseEvent, screenPositionFromMouseEvent} = require './utils'
 
 class EditorControl
   constructor: (@editorView, @manager) ->
@@ -17,15 +17,13 @@ class EditorControl
       @deactivate()
 
     # buffer events for automatic check
-    # @subscriber.subscribe @editor.getBuffer(), 'saved', (buffer) =>
-    #   return unless isHaskellSource buffer.getUri()
-    #
-    #   # TODO if uri was changed, then we have to remove all current markers
-    #
-    #   if atom.config.get('ide-haskell.checkOnFileSave')
-    #     atom.workspaceView.trigger 'ide-haskell:check-file'
-    #   if atom.config.get('ide-haskell.lintOnFileSave')
-    #     atom.workspaceView.trigger 'ide-haskell:lint-file'
+    @subscriber.subscribe @editor.getBuffer(), 'saved', (buffer) =>
+      return unless isFlowSource buffer
+
+      # TODO if uri was changed, then we have to remove all current markers
+
+      if atom.config.get('ide-flow.checkOnFileSave')
+        atom.workspaceView.trigger 'ide-flow:check'
 
     # show expression type if mouse stopped somewhere
     @subscriber.subscribe @scroll, 'mousemove', (e) =>

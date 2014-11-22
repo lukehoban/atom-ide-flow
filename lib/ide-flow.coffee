@@ -16,3 +16,7 @@ module.exports =
     _pluginManager.deactivate()
     _pluginManager = null
     atom.workspaceView.off 'ide-flow:check'
+
+  configDefaults:
+    checkOnFileSave: true,
+    expressionTypeInterval: 300
