@@ -1,4 +1,5 @@
 {EditorControl} = require './editor-control'
+utilFlowCommand = require('./util-flow-command')
 
 class PluginManager
   constructor: () ->
@@ -19,5 +20,12 @@ class PluginManager
 
     @controlSubscription?.off()
     @controlSubscription = null
+
+  check: ->
+    utilFlowCommand.check()
+
+  typeAtPos: ({bufferPt, fileName, cwd,  onResult}) ->
+    utilFlowCommand.typeAtPos {fileName, bufferPt, onResult}
+
 
 module.exports = { PluginManager }

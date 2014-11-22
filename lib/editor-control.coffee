@@ -83,43 +83,12 @@ class EditorControl
     # create tooltip with pending
     @exprTypeTooltip = new TooltipView(tooltipRect)
 
-    # process start
-    # @manager.pendingProcessController.start Channel.expressionType, utilGhcMod.type, {
-    #   pt: bufferPt
-    #   fileName: @editor.getUri()
-    #   onResult: (result) =>
-    #     @exprTypeTooltip?.updateText(result.type)
-    # }
-    # This assumes the active pane item is an editor
-    filename = @editor.getPath()
-    dir = path.dirname filename
+    @manager.typeAtPos
+      bufferPt: bufferPt
+      fileName: @editor.getPath()
+      onResult: (result) =>
+        @exprTypeTooltip?.updateText(result.type)
 
-    if !@servers then @servers = {}
-    if !@servers[dir] then @servers[dir] = @startServer()
-
-    process = new BufferedProcess
-      command: '/Users/lukeh/Downloads/flow/flow'
-      args: ['type-at-pos', filename, bufferPt.row + 1, bufferPt.column + 1, '--json']
-      options: { cwd: dir}
-      stdout: (output) =>
-        result = JSON.parse output
-        @exprTypeTooltip?.updateText result.type
-        console.log(output)
-      stderr: (output) -> console.log("ERR: " + output)
-      exit: (code) -> console.log("Flow exited with #{code}")
-
-  startServer: ->
-    filename = @editor.getPath()
-    dir = path.dirname filename
-
-    process = new BufferedProcess
-      command: '/Users/lukeh/Downloads/flow/flow'
-      args: ['server', '--lib', 'lib']
-      options: { cwd: dir}
-      stdout: (output) -> console.log(output)
-      stderr: (output) -> console.log("ERR: " + output)
-      exit: (code) -> console.log("Flow exited with #{code}")
-    process
 
   hideExpressionType: ->
     if @exprTypeTooltip?
