@@ -1,12 +1,12 @@
 {
-  "name": "ascii-art",
-  "main": "./lib/ascii-art",
-  "version": "0.0.0",
-  "description": "A short description of your package",
+  "name": "ide-flow",
+  "main": "./lib/ide-flow",
+  "version": "0.0.1",
+  "description": "Atom.io IDE support for Facebook Flow",
   "activationCommands": {
-    "atom-workspace": "ascii-art:convert"
+    "atom-workspace": "ide-flow:check"
   },
-  "repository": "https://github.com/atom/ascii-art",
+  "repository": "https://github.com/lukehoban/ide-flow",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"

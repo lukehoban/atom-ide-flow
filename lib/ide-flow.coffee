@@ -165,7 +165,7 @@ module.exports =
     @pluginManager = new PluginManager()
 
     @servers = {}
-    atom.workspaceView.command "ascii-art:convert", => @check()
+    atom.workspaceView.command "ide-flow:check", => @check()
 
   startServer: ->
     editor = atom.workspace.activePaneItem

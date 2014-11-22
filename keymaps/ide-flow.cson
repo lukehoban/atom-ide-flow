@@ -8,4 +8,4 @@
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
 '.editor':
-  'cmd-alt-a': 'ascii-art:convert'
+  'cmd-alt-a': 'ide-flow:check'
