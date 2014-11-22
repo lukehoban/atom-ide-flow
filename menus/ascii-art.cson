@@ -1,0 +1,22 @@
+# See https://atom.io/docs/latest/creating-a-package#menus for more details
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Toggle ascii-art'
+      'command': 'ascii-art:toggle'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'ascii-art'
+      'submenu': [
+        {
+          'label': 'Toggle'
+          'command': 'ascii-art:toggle'
+        }
+      ]
+    ]
+  }
+]

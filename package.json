@@ -1,0 +1,17 @@
+{
+  "name": "ascii-art",
+  "main": "./lib/ascii-art",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "activationCommands": {
+    "atom-workspace": "ascii-art:convert"
+  },
+  "repository": "https://github.com/atom/ascii-art",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {
+    "figlet": "1.0.8"
+  }
+}
