@@ -22,14 +22,31 @@ class PluginManager
     @controlSubscription?.off()
     @controlSubscription = null
 
+  gotoDefinition: ->
+    editor = atom.workspace.getActiveEditor()
+    bufferPt = editor.getCursorBufferPosition()
+    @typeAtPos
+      bufferPt: bufferPt
+      fileName: editor.getPath()
+      onResult: (result) ->
+        target = result.reasons[0]
+        if target?
+          promise = atom.workspace.open target.path,
+            initialLine: target.line - 1
+            initialColumn: target.start - 1
+          promise.then (editor) ->
+            editor.setCursorBufferPosition [target.line - 1, target.start - 1]
+            editor.scrollToCursorPosition()
+
+        else
+          console.log("Could not go to definition")
+
   check: ->
     #utilFlowCommand.check()
 
     return if @checkTurnedOff? and @checkTurnedOff
     fileName = atom.workspaceView.getActiveView()?.getEditor().getPath()
     return unless fileName?
-
-    @outputView?.pendingCheck()
 
     utilFlowCommand.check
       fileName: fileName
@@ -50,7 +67,7 @@ class PluginManager
     for editorView in atom.workspaceView.getEditorViews()
       editorView.flowController?.resultsUpdated()
 
-  typeAtPos: ({bufferPt, fileName, cwd, onResult}) ->
+  typeAtPos: ({bufferPt, fileName, onResult}) ->
     utilFlowCommand.typeAtPos
       fileName: fileName
       bufferPt: bufferPt

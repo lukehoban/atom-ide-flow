@@ -11,6 +11,8 @@ module.exports =
     _pluginManager = new PluginManager()
     atom.workspaceView.command "ide-flow:check", ->
       _pluginManager.check()
+    atom.workspaceView.command "ide-flow:goto-def", ->
+      _pluginManager.gotoDefinition()
 
   deactivate: ->
     _pluginManager.deactivate()

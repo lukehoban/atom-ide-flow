@@ -1,10 +1,10 @@
 # See https://atom.io/docs/latest/creating-a-package#menus for more details
 'context-menu':
   'atom-text-editor': [
-    # {
-    #   'label': 'Toggle ascii-art'
-    #   'command': 'ascii-art:toggle'
-    # }
+    {
+      'label': 'Go to definition'
+      'command': 'ide-flow:goto-def'
+    }
   ]
 'menu': [
   {
