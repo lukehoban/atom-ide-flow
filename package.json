@@ -12,6 +12,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "figlet": "1.0.8"
+    "figlet": "1.0.8",
+    "emissary": "~1.2.1"
   }
 }
