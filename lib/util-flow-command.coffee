@@ -33,6 +33,7 @@ runSync = ({args, cwd, input}) ->
       options.input = input
 
     done = spawnSync('/Users/lukeh/Downloads/flow/flow', args, options)
+    console.debug done?.stdout.toString()
     done?.stdout
 
 module.exports =
@@ -58,10 +59,11 @@ module.exports =
         result = JSON.parse output
         onResult result
 
-  typeAtPos: ({fileName, bufferPt, onResult, onComplete, onFailure, onDone}) ->
+  typeAtPos: ({fileName, bufferPt, text, onResult, onComplete, onFailure, onDone}) ->
     run
-      args: ['type-at-pos', fileName, bufferPt.row + 1, bufferPt.column + 1, '--json']
+      args: ['type-at-pos', bufferPt.row + 1, bufferPt.column + 1, '--json', '--path', fileName]
       cwd: path.dirname fileName
+      input: text
       onMessage: (output) ->
         result = JSON.parse output
         onResult result

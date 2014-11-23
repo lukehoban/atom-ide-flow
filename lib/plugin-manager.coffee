@@ -87,11 +87,12 @@ class PluginManager
     for editorView in atom.workspaceView.getEditorViews()
       editorView.flowController?.resultsUpdated()
 
-  typeAtPos: ({bufferPt, fileName, onResult}) ->
+  typeAtPos: ({bufferPt, fileName, text, onResult}) ->
     utilFlowCommand.typeAtPos
       fileName: fileName
       bufferPt: bufferPt
       onResult: onResult
+      text: text
 
 
 module.exports = { PluginManager }

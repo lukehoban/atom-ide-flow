@@ -20,7 +20,7 @@ class EditorControl
 
     # buffer events for automatic check
     @subscriber.subscribe @editor.getBuffer(), 'saved', (buffer) =>
-      return unless isFlowSource buffer
+      return unless isFlowSource @editor
 
       # TODO if uri was changed, then we have to remove all current markers
 
@@ -44,6 +44,8 @@ class EditorControl
     @subscriber.subscribe @gutter, 'mouseleave', (e) =>
       @hideCheckResult()
 
+    atom.workspaceView.trigger 'ide-flow:check'
+    
     # update all results from manager
     @resultsUpdated()
 
@@ -67,9 +69,10 @@ class EditorControl
     pixelPt = pixelPositionFromMouseEvent(@editorView, e)
     screenPt = @editor.screenPositionForPixelPosition(pixelPt)
     bufferPt = @editor.bufferPositionForScreenPosition(screenPt)
+    curCharPixelPt = @editor.pixelPositionForBufferPosition([bufferPt.row, bufferPt.column])
     nextCharPixelPt = @editor.pixelPositionForBufferPosition([bufferPt.row, bufferPt.column + 1])
 
-    return if pixelPt.left > nextCharPixelPt.left
+    return if curCharPixelPt.left >= nextCharPixelPt.left
 
     # find out show position
     offset = @editorView.lineHeight * 0.7
@@ -85,6 +88,7 @@ class EditorControl
     @manager.typeAtPos
       bufferPt: bufferPt
       fileName: @editor.getPath()
+      text: @editor.getText()
       onResult: (result) =>
         @exprTypeTooltip?.updateText(result.type)
 

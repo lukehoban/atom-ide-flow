@@ -2,7 +2,9 @@ path = require 'path'
 
 isFlowSource = (editor) ->
   if path.extname(editor.getPath()) is '.js'
-    return true
+    if editor.getTextInBufferRange([[0,0], [100,0]]).match(/@flow/)
+      return true
+    return false
   return false
 
 # pixel position from mouse event
