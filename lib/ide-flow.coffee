@@ -22,3 +22,4 @@ module.exports =
   configDefaults:
     checkOnFileSave: true,
     expressionTypeInterval: 300
+    flowPath: ""

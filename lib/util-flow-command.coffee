@@ -2,11 +2,21 @@ path = require 'path'
 {spawnSync} = require 'child_process'
 {BufferedProcess} = require 'atom'
 
+getFlowCommand = ->
+  #TODO Can we do better than this?
+  if atom.config.get('ide-flow.flowPath') is ""
+    _flowCommand = spawnSync('which', ['flow']).stdout.toString()
+    if _flowCommand is ""
+      console.error "Could not find a 'flow' binary on your PATH, go to package settings and set 'Flow Path'"
+    else
+      atom.config.set 'ide-flow.flowPath', _flowCommand
+  return atom.config.get('ide-flow.flowPath')
+
 run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
   options = if cwd then { cwd: cwd } else {}
 
   bufferedprocess = new BufferedProcess
-    command: '/Users/lukeh/Downloads/flow/flow'
+    command: getFlowCommand()
     args: args
     options: options
     stdout: (data) ->
@@ -32,7 +42,7 @@ runSync = ({args, cwd, input}) ->
     if input
       options.input = input
 
-    done = spawnSync('/Users/lukeh/Downloads/flow/flow', args, options)
+    done = spawnSync getFlowCommand(), args, options
     console.debug done?.stdout.toString()
     done?.stdout
 

@@ -1,22 +1,19 @@
 # See https://atom.io/docs/latest/creating-a-package#menus for more details
 'context-menu':
   'atom-text-editor': [
-    {
-      'label': 'Go to definition'
-      'command': 'ide-flow:goto-def'
-    }
+    {type: 'separator'},
+    {label: 'Go to definition', command: 'ide-flow:goto-def'},
+    {type: 'separator'}
   ]
 'menu': [
   {
     'label': 'Packages'
     'submenu': [
-      # 'label': 'ascii-art'
-      # 'submenu': [
-      #   {
-      #     'label': 'Toggle'
-      #     'command': 'ascii-art:toggle'
-      #   }
-      #]
+      'label': 'Flow IDE'
+      'submenu': [
+        {label: 'Go to definition', command: 'ide-flow:goto-def'}
+        {label: 'Error check', command: 'ide-flow:check'}
+      ]
     ]
   }
 ]
