@@ -1,23 +1,43 @@
 {EditorControl} = require './editor-control'
 utilFlowCommand = require('./util-flow-command')
 
+createAutocompleteProvider = (Provider, Suggestion, manager) ->
+  class FlowProvider extends Provider
+    exclusive: true
+    buildSuggestions: (callback) ->
+      editor = atom.workspace.getActiveEditor()
+      bufferPt = editor.getCursorBufferPosition()
+      utilFlowCommand.autocomplete
+        bufferPt: bufferPt
+        fileName: editor.getPath()
+        text: editor.getText()
+        onResult: (results) =>
+          suggestions = []
+          for result in results
+            suggestions.push new Suggestion(this, word: result.name, label: result.type)
+          callback suggestions
+
 class PluginManager
   constructor: () ->
     @checkResults = []
-    @subsribeEditorViewController()
+
+    # Defer subscribing the editors until autocomplete is loaded
+    # TODO could avoid this delay by just doing the autocomplete registion late
+    atom.packages.activatePackage("autocomplete-plus-async")
+      .then (pkg) =>
+        @autocomplete = pkg.mainModule
+        FlowProvider = createAutocompleteProvider @autocomplete.Provider, @autocomplete.Suggestion, this
+        @controlSubscription = atom.workspaceView.eachEditorView (editorView) =>
+          editorView.flowController = new EditorControl(editorView, this)
+          editorView.flowAutocomplete = new FlowProvider(editorView)
+          @autocomplete.registerProviderForEditorView editorView.flowAutocomplete, editorView
 
   deactivate: () ->
-    @deleteEditorViewControllers()
-
-  # Subscribe on editor view for attaching controller.
-  subsribeEditorViewController: ->
-    @controlSubscription = atom.workspaceView.eachEditorView (editorView) =>
-      editorView.flowController = new EditorControl(editorView, this)
-
-  deleteEditorViewControllers: ->
     for editorView in atom.workspaceView.getEditorViews()
       editorView.flowController?.deactivate()
       editorView.flowController = null
+      @autocomplete.unregisterProvider editorView.flowAutocomplete
+      editorView.flowAutocomplete = null
 
     @controlSubscription?.off()
     @controlSubscription = null

@@ -146,5 +146,4 @@ class EditorControl
       @checkResultTooltip.remove()
       @checkResultTooltip = null
 
-
 module.exports = { EditorControl }
