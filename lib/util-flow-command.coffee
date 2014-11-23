@@ -1,11 +1,9 @@
 path = require 'path'
+{spawnSync} = require 'child_process'
 {BufferedProcess} = require 'atom'
 
 run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
   options = if cwd then { cwd: cwd } else {}
-
-  stdout = (onMessage, line) ->
-    line.split('\n').filter((l)->0 != l.length).map onMessage
 
   bufferedprocess = new BufferedProcess
     command: '/Users/lukeh/Downloads/flow/flow'
@@ -28,6 +26,14 @@ run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
     onFailure?()
 
   bufferedprocess
+
+runSync = ({args, cwd, input}) ->
+    options = if cwd then { cwd: cwd } else {}
+    if input
+      options.input = input
+
+    done = spawnSync('/Users/lukeh/Downloads/flow/flow', args, options)
+    done?.stdout
 
 module.exports =
 
@@ -76,3 +82,11 @@ module.exports =
       onMessage: (output) ->
         result = JSON.parse output
         onResult result
+
+  autocompleteSync: ({fileName, bufferPt, text}) ->
+    output = runSync
+      args: ['autocomplete', fileName, bufferPt.row + 1, bufferPt.column + 1, '--json']
+      cwd: path.dirname fileName
+      input: text
+    result = JSON.parse output
+    result

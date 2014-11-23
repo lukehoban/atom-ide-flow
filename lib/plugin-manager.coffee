@@ -1,21 +1,27 @@
 {EditorControl} = require './editor-control'
 utilFlowCommand = require('./util-flow-command')
 
+fuzzaldrin = require "fuzzaldrin"
 createAutocompleteProvider = (Provider, Suggestion, manager) ->
   class FlowProvider extends Provider
+
+    # TODO Use the asynchronous autocomplete plus API when available
     exclusive: true
-    buildSuggestions: (callback) ->
+
+    buildSuggestions: ->
       editor = atom.workspace.getActiveEditor()
       bufferPt = editor.getCursorBufferPosition()
-      utilFlowCommand.autocomplete
+      selection = editor.getSelection()
+      prefix = @prefixOfSelection selection
+      results = utilFlowCommand.autocompleteSync
         bufferPt: bufferPt
         fileName: editor.getPath()
         text: editor.getText()
-        onResult: (results) =>
-          suggestions = []
-          for result in results
-            suggestions.push new Suggestion(this, word: result.name, label: result.type)
-          callback suggestions
+      filteredResults = fuzzaldrin.filter results, prefix, key: "name"
+      suggestions = []
+      for result in filteredResults
+        suggestions.push new Suggestion(this, word: result.name, label: result.type, prefix: prefix)
+      suggestions
 
 class PluginManager
   constructor: () ->
@@ -23,7 +29,7 @@ class PluginManager
 
     # Defer subscribing the editors until autocomplete is loaded
     # TODO could avoid this delay by just doing the autocomplete registion late
-    atom.packages.activatePackage("autocomplete-plus-async")
+    atom.packages.activatePackage("autocomplete-plus")
       .then (pkg) =>
         @autocomplete = pkg.mainModule
         FlowProvider = createAutocompleteProvider @autocomplete.Provider, @autocomplete.Suggestion, this
