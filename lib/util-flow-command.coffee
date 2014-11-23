@@ -56,3 +56,11 @@ module.exports =
       onMessage: (output) ->
         result = JSON.parse output
         onResult result
+
+  getDef: ({fileName, bufferPt, onResult, onComplete, onFailure, onDone}) ->
+    process = run
+      args: ['get-def', fileName, bufferPt.row + 1, bufferPt.column + 1, '--json']
+      cwd: path.dirname fileName
+      onMessage: (output) ->
+        result = JSON.parse output
+        onResult result
