@@ -8,5 +8,4 @@
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
 '.editor':
-  'cmd-alt-a': 'ide-flow:check'
   'cmd-f12': 'ide-flow:goto-def'

@@ -6,148 +6,21 @@
 @import "ui-variables";
 @import "tooltips";
 
-.ide-flow-panel {
-  display: -webkit-flex;
-  -webkit-flex-direction: column;
-  min-height: 120px;
-
-  .resize-handle {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 10px;
-    cursor: row-resize;
-  }
-
-  .panel {
-    -webkit-flex-grow: 1;
-    display: -webkit-flex;
-    -webkit-flex-direction: column;
-    margin: 0;
-  }
-
-  .panel-heading {
-    -webkit-flex-shrink: 0;
-    padding-top: 5px;
-    padding-bottom: 5px;
-
-    .btn-cell {
-      display: table-cell;
-      padding: 0px 1px;
-    }
-
-    .btn {
-      top: 0px;
-    }
-
-    .status-icon {
-      padding-top: 3px;
-
-      &:before {
-        font-family: 'Octicons Regular';
-        font-weight: normal;
-        font-style: normal;
-        -webkit-font-smoothing: antialiased;
-        text-decoration: none;
-        font-size: 10pt;
-        content: @check;
-        width: 15pt;
-      }
-
-      &[data-status=progress]:before {
-        content: @hourglass;
-      }
-      &[data-status=ready]:before {
-        content: @check;
-      }
-      &[data-status=error]:before {
-        color: @text-color-error;
-        content: @alert;
-      }
-    }
-  }
-
-  .panel-body {
-    -webkit-flex-grow: 1;
-    overflow-y: scroll;
-    padding: 3px @component-padding;
-
-    .result-block {
-      padding: 4px 0px;
-      margin: 0px;
-      font-size: 8pt;
-      line-height: 12pt;
-      white-space: normal;
-
-      .position {
-        cursor: pointer;
-      }
-
-      .description {
-        padding: 5px 8px 3px 8px;
-        color: lighten(@text-color, 15%);
-        background-color: @tool-panel-background-color;
-        font-family: Consolas, monospace;
-        white-space: pre-wrap;
-        border-radius: 4px;
-        font-size: 9pt;
-      }
-    }
-  }
-}
-
 @error-color: #b22222;
-
 .editor {
-  .ide-flow-lint {
-    background-color: @background-color-highlight;
-    z-index: 1;
-  }
-
-  .ide-flow-warning {
-    background-color: @background-color-highlight;
-    z-index: 2;
-  }
-
   .ide-flow-error {
     background-color: @background-color-highlight;
     z-index: 3;
   }
 
   .highlight {
-    &.ide-flow-lint .region {
-      background: linear-gradient(to right, @background-color-info 0%, fadeout(@background-color-info, 50%) 100%);
-      z-index: 1;
-    }
-    &.ide-flow-warning .region {
-      background: linear-gradient(to right, @background-color-warning 0%, fadeout(@background-color-warning, 50%) 100%);
-      z-index: 2;
-    }
     &.ide-flow-error .region {
-      background: linear-gradient(to right, @background-color-error 0%, fadeout(@background-color-error, 50%) 100%);
+      background: linear-gradient(to right, fadeout(@background-color-error, 30%) 0%, fadeout(@background-color-error, 35%) 100%);
       z-index: 3;
     }
   }
 
   .gutter .line-number {
-    &.ide-flow-lint .icon-right {
-      visibility: visible;
-      &:before {
-        content: @info;
-        color: @text-color-info;
-        z-index: 1;
-      }
-    }
-
-    &.ide-flow-warning .icon-right {
-      visibility: visible;
-      &:before {
-        content: @stop;
-        color: @text-color-warning;
-        z-index: 2;
-      }
-    }
-
     &.ide-flow-error .icon-right {
       visibility: visible;
       &:before {

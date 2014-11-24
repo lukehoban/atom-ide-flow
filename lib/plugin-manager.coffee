@@ -1,5 +1,6 @@
 {EditorControl} = require './editor-control'
 utilFlowCommand = require('./util-flow-command')
+{isFlowSource} = require('./utils')
 
 fuzzaldrin = require "fuzzaldrin"
 createAutocompleteProvider = (Provider, Suggestion, manager) ->
@@ -10,6 +11,7 @@ createAutocompleteProvider = (Provider, Suggestion, manager) ->
 
     buildSuggestions: ->
       editor = atom.workspace.getActiveEditor()
+      return unless isFlowSource editor
       bufferPt = editor.getCursorBufferPosition()
       selection = editor.getSelection()
       prefix = @prefixOfSelection selection
