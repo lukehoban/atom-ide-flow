@@ -19,3 +19,11 @@ Heavily inspired by [IDE Haskell](https://atom.io/packages/ide-haskell).
 ## Installation
 
     $ apm install ide-flow
+
+## Notes
+
+* If the `flow` command is not on your path, set it's location in the package
+  settings under `Flow Path`
+* Automatically starts a flow server if not already active in a given folder.  
+  If you need to set configurations on the flow server (such as a --lib flag),
+  run a server manually in the folder you are working in.

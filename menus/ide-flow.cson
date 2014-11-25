@@ -3,6 +3,7 @@
   'atom-text-editor': [
     {type: 'separator'},
     {label: 'Go to definition', command: 'ide-flow:goto-def'},
+    {label: 'Error check', command: 'ide-flow:check'},
     {type: 'separator'}
   ]
 'menu': [
