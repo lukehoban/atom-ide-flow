@@ -45,7 +45,7 @@ class EditorControl
       @hideCheckResult()
 
     atom.workspaceView.trigger 'ide-flow:check'
-    
+
     # update all results from manager
     @resultsUpdated()
 
