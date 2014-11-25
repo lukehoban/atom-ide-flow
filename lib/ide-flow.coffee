@@ -1,6 +1,5 @@
 path = require 'path'
 {BufferedProcess} = require 'atom'
-
 {PluginManager} = require './plugin-manager'
 
 _pluginManager = null
