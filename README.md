@@ -6,6 +6,8 @@ Adds several IDE features for Facebook Flow language to Atom:
 * Go to definition command navigates to the definition of a variable
 * Autocomplete shows type-based completion lists [NOTE: Must install `autocomplete-plus` plugin]
 
+Heavily inspired by [IDE Haskell](https://atom.io/packages/ide-haskell).
+
 ## Demo
 ![Feature demo](https://github.com/lukehoban/atom-ide-flow/raw/master/ideflow.gif)
 
