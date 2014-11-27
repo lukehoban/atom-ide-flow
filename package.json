@@ -3,7 +3,7 @@
   "main": "./lib/ide-flow",
   "version": "0.0.1",
   "description": "Atom.io IDE support for Facebook Flow",
-  "repository": "https://github.com/lukehoban/ide-flow",
+  "repository": "https://github.com/lukehoban/atom-ide-flow",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
