@@ -1,7 +1,7 @@
 path = require 'path'
 
 isFlowSource = (editor) ->
-  if path.extname(editor.getPath()) is '.js'
+  if path.extname(editor.getPath()) in ['.js', '.jsx']
     if editor.getTextInBufferRange([[0,0], [100,0]]).match(/@flow/)
       return true
     return false
