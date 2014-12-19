@@ -10,7 +10,7 @@ getFlowCommand = ->
       console.error "Could not find a 'flow' binary on your PATH, go to package settings and set 'Flow Path'"
     else
       atom.config.set 'ide-flow.flowPath', _flowCommand
-  return atom.config.get('ide-flow.flowPath')
+  return atom.config.get('ide-flow.flowPath').trim()
 
 run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
   options = if cwd then { cwd: cwd } else {}
