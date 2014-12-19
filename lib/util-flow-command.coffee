@@ -32,7 +32,7 @@ run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
   # on error hack (from http://discuss.atom.io/t/catching-exceptions-when-using-bufferedprocess/6407)
   bufferedprocess.process.on 'error', (node_error) ->
     # TODO this error should be in output view log tab
-    console.error "Flow utility not found at '/Users/lukeh/Downloads/flow/flow'"
+    console.error "Flow utility not found.  Set the Flow Path in package settings."
     onFailure?()
 
   bufferedprocess
