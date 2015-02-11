@@ -1,12 +1,11 @@
-path = require 'path'
-{BufferedProcess} = require 'atom'
-{PluginManager} = require './plugin-manager'
-
 _pluginManager = null
 
 module.exports =
 
   activate: ->
+    path = require 'path'
+    {BufferedProcess} = require 'atom'
+    {PluginManager} = require './plugin-manager'
     _pluginManager = new PluginManager()
     atom.workspaceView.command "ide-flow:check", ->
       _pluginManager.check()
@@ -17,6 +16,9 @@ module.exports =
     _pluginManager.deactivate()
     _pluginManager = null
     atom.workspaceView.off 'ide-flow:check'
+
+  provide: ->
+    return {providers: [require './flow-autocomplete-provider']}
 
   configDefaults:
     checkOnFileSave: true,

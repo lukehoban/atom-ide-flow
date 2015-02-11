@@ -10,22 +10,10 @@ class PluginManager
     @controlSubscription = atom.workspaceView.eachEditorView (editorView) =>
       editorView.flowController = new EditorControl(editorView, this)
 
-    # If autocomplete is available, register
-    atom.packages.activatePackage("autocomplete-plus")
-      .then (pkg) =>
-        @autocomplete = pkg.mainModule
-        FlowProvider = createAutocompleteProvider @autocomplete.Provider, @autocomplete.Suggestion, this
-        @controlSubscription = atom.workspaceView.eachEditorView (editorView) =>
-          editorView.flowAutocomplete = new FlowProvider(editorView)
-          @autocomplete.registerProviderForEditorView editorView.flowAutocomplete, editorView
-
   deactivate: () ->
     for editorView in atom.workspaceView.getEditorViews()
       editorView.flowController?.deactivate()
-      if editorView.flowAutocomplete?
-        @autocomplete.unregisterProvider editorView.flowAutocomplete
       editorView.flowController = null
-      editorView.flowAutocomplete = null
     @controlSubscription?.off()
     @controlSubscription = null
 
