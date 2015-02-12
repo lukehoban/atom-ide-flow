@@ -12,5 +12,12 @@
     "figlet": "1.0.8",
     "emissary": "~1.2.1",
     "fuzzaldrin": "~2.1.0"
+  },
+  "providedServices": {
+    "autocomplete.provider": {
+      "versions": {
+        "1.1.0": "provide"
+      }
+    }
   }
 }
