@@ -7,10 +7,12 @@ module.exports =
     {BufferedProcess} = require 'atom'
     {PluginManager} = require './plugin-manager'
     _pluginManager = new PluginManager()
-    atom.workspaceView.command "ide-flow:check", ->
-      _pluginManager.check()
-    atom.workspaceView.command "ide-flow:goto-def", ->
-      _pluginManager.gotoDefinition()
+    atom.commands.add 'atom-workspace',
+      "ide-flow:check", ->
+        _pluginManager.check()
+    atom.commands.add 'atom-workspace',
+      "ide-flow:goto-def", ->
+        _pluginManager.gotoDefinition()
 
   deactivate: ->
     _pluginManager.deactivate()

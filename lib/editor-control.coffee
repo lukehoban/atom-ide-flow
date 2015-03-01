@@ -1,31 +1,34 @@
 path = require 'path'
-{BufferedProcess} = require 'atom'
+$ = require 'jquery'
+{BufferedProcess, CompositeDisposable} = require 'atom'
 {Subscriber} = require 'emissary'
 {TooltipView} = require './tooltip-view'
-{isFlowSource, pixelPositionFromMouseEvent, screenPositionFromMouseEvent} = require './utils'
+{isFlowSource, pixelPositionFromMouseEvent, screenPositionFromMouseEvent, getElementsByClass} = require './utils'
 
 class EditorControl
-  constructor: (@editorView, @manager) ->
+  constructor: (@editor, @manager) ->
     @checkMarkers = []
+    @disposables = new CompositeDisposable
 
-    @editor = @editorView.getEditor()
-    @gutter = @editorView.gutter
-    @scroll = @editorView.find('.scroll-view')
+    @editorView = atom.views.getView(@editor);
+    @gutter = $(getElementsByClass(@editorView, '.gutter'))
+    @scroll = $(getElementsByClass(@editorView, '.scroll-view'))
 
     @subscriber = new Subscriber()
 
     # event for editor updates
-    @subscriber.subscribe @editorView, 'editor:will-be-removed', =>
+    @editor.onDidDestroy =>
       @deactivate()
 
     # buffer events for automatic check
-    @subscriber.subscribe @editor.getBuffer(), 'saved', (buffer) =>
+    buffer = @editor.getBuffer()
+    @disposables.add buffer.onDidSave () =>
       return unless isFlowSource @editor
 
       # TODO if uri was changed, then we have to remove all current markers
-
+      workspaceElement = atom.views.getView(atom.workspace)
       if atom.config.get('ide-flow.checkOnFileSave')
-        atom.workspaceView.trigger 'ide-flow:check'
+        atom.commands.dispatch workspaceElement, 'ide-flow:check'
 
     # show expression type if mouse stopped somewhere
     @subscriber.subscribe @scroll, 'mousemove', (e) =>
@@ -44,7 +47,7 @@ class EditorControl
     @subscriber.subscribe @gutter, 'mouseleave', (e) =>
       @hideCheckResult()
 
-    atom.workspaceView.trigger 'ide-flow:check'
+    atom.commands.dispatch atom.views.getView(atom.workspace), 'ide-flow:check'
 
     # update all results from manager
     @resultsUpdated()
@@ -53,6 +56,7 @@ class EditorControl
     @clearExprTypeTimeout()
     #@hideCheckResult()
     @subscriber.unsubscribe()
+    @disposables.dispose()
     @editorView.control = undefined
 
   # helper function to hide tooltip and stop timeout
@@ -66,16 +70,15 @@ class EditorControl
   showExpressionType: (e) ->
     return unless isFlowSource(@editor) and not @exprTypeTooltip?
 
-    pixelPt = pixelPositionFromMouseEvent(@editorView, e)
+    pixelPt = pixelPositionFromMouseEvent(@editor, e)
     screenPt = @editor.screenPositionForPixelPosition(pixelPt)
     bufferPt = @editor.bufferPositionForScreenPosition(screenPt)
-    curCharPixelPt = @editor.pixelPositionForBufferPosition([bufferPt.row, bufferPt.column])
-    nextCharPixelPt = @editor.pixelPositionForBufferPosition([bufferPt.row, bufferPt.column + 1])
+    nextCharPixelPt = @editorView.pixelPositionForBufferPosition([bufferPt.row, bufferPt.column + 1])
 
-    return if curCharPixelPt.left >= nextCharPixelPt.left
+    return if pixelPt.left >= nextCharPixelPt.left
 
     # find out show position
-    offset = @editorView.lineHeight * 0.7
+    offset = @editor.getLineHeightInPixels() * 0.7
     tooltipRect =
       left: e.clientX
       right: e.clientX
@@ -115,14 +118,14 @@ class EditorControl
     @decorateMarker(m) for m in @checkMarkers
 
   decorateMarker: ({marker}) ->
-    @editor.decorateMarker marker, type: 'gutter', class: 'ide-flow-error'
+    @editor.decorateMarker marker, type: 'line-number', class: 'ide-flow-error'
     @editor.decorateMarker marker, type: 'highlight', class: 'ide-flow-error'
     @editor.decorateMarker marker, type: 'line', class: 'ide-flow-error'
 
     # show check result when mouse over gutter icon
   showCheckResult: (e) ->
     @hideCheckResult()
-    row = @editor.bufferPositionForScreenPosition(screenPositionFromMouseEvent(@editorView, e)).row
+    row = @editor.bufferPositionForScreenPosition(screenPositionFromMouseEvent(@editor, e)).row
 
     # find best result for row
     foundResult = null
@@ -136,7 +139,7 @@ class EditorControl
 
     # create show position
     targetRect = e.currentTarget.getBoundingClientRect()
-    offset = @editorView.lineHeight * 0.3
+    offset = @editor.getLineHeightInPixels() * 0.3
     rect =
       left: targetRect.left - offset
       right: targetRect.right + offset

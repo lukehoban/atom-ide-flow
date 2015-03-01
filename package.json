@@ -11,7 +11,9 @@
   "dependencies": {
     "figlet": "1.0.8",
     "emissary": "~1.2.1",
-    "fuzzaldrin": "~2.1.0"
+    "fuzzaldrin": "~2.1.0",
+    "jquery": "^2",
+    "atom-space-pen-views": "^2.0.3"
   },
   "providedServices": {
     "autocomplete.provider": {

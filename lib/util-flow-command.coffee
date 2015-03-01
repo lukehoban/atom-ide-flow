@@ -49,7 +49,7 @@ runSync = ({args, cwd, input}) ->
 module.exports =
 
   startServer: ->
-    editor = atom.workspace.activePaneItem
+    editor = atom.workspace.getActivePaneItem()
     filename = editor.getPath()
     dir = path.dirname filename
     process = run
