@@ -6,10 +6,10 @@ module.exports =
   selector: '.source.js, .source.jsx'
   blacklist: '.source.js .comment'
   requestHandler: (options) ->
-    editor = atom.workspace.getActiveEditor()
+    editor = atom.workspace.getActiveTextEditor()
     return unless isFlowSource editor
     bufferPt = editor.getCursorBufferPosition()
-    selection = editor.getSelection()
+    selection = editor.getLastSelection()
     prefix = options.prefix
     results = utilFlowCommand.autocompleteSync
       bufferPt: bufferPt

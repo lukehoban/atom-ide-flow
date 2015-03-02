@@ -1,26 +1,34 @@
 path = require 'path'
 
 isFlowSource = (editor) ->
-  if path.extname(editor.getPath()) in ['.js', '.jsx']
-    if editor.getTextInBufferRange([[0,0], [100,0]]).match(/@flow/)
-      return true
-    return false
-  return false
+  buffer = editor.getBuffer()
+  fname = buffer.getUri()
+  isFlow = false
+  if path.extname(fname) in ['.js', '.jsx']
+    if buffer.lineForRow(buffer.nextNonBlankRow -1)?.match(/\/\*/)
+      buffer.scan /\/\*(.|\n)*?\*\//, (scan) =>
+        isFlow = true if scan.matchText.match(/@flow/)
+  return isFlow
 
 # pixel position from mouse event
-pixelPositionFromMouseEvent = (editorView, event) ->
+pixelPositionFromMouseEvent = (editor, event) ->
   {clientX, clientY} = event
-  linesClientRect = editorView.find('.lines')[0].getBoundingClientRect()
+  elem = atom.views.getView(editor)
+  linesClientRect = getElementsByClass(elem, ".lines")[0].getBoundingClientRect()
   top = clientY - linesClientRect.top
   left = clientX - linesClientRect.left
   {top, left}
 
 # screen position from mouse event
-screenPositionFromMouseEvent = (editorView, event) ->
-  editorView.getModel().screenPositionForPixelPosition(pixelPositionFromMouseEvent(editorView, event))
+screenPositionFromMouseEvent = (editor, event) ->
+  editor.screenPositionForPixelPosition(pixelPositionFromMouseEvent(editor, event))
+
+getElementsByClass = (elem,klass) ->
+  elem.rootElement.querySelectorAll(klass)
 
 module.exports = {
   isFlowSource,
   pixelPositionFromMouseEvent,
-  screenPositionFromMouseEvent
+  screenPositionFromMouseEvent,
+  getElementsByClass
 }

@@ -7,11 +7,13 @@ class PluginManager
     @checkResults = []
 
     # Register an EditorControl for each editor view
-    @controlSubscription = atom.workspaceView.eachEditorView (editorView) =>
-      editorView.flowController = new EditorControl(editorView, this)
+    @controlSubscription = atom.workspace.observeTextEditors (editor) =>
+      editorView = atom.views.getView(editor)
+      editorView.flowController = new EditorControl(editor, this)
 
   deactivate: () ->
-    for editorView in atom.workspaceView.getEditorViews()
+    for editor in atom.workspace.getTextEditors()
+      editorView = atom.views.getView(editor)
       editorView.flowController?.deactivate()
       editorView.flowController = null
     @controlSubscription?.off()
@@ -34,7 +36,7 @@ class PluginManager
 
   check: ->
     return if @checkTurnedOff? and @checkTurnedOff
-    fileName = atom.workspaceView.getActiveView()?.getEditor().getPath()
+    fileName = atom.workspace.getActiveTextEditor()?.getPath()
     return unless fileName?
 
     utilFlowCommand.check
@@ -53,7 +55,8 @@ class PluginManager
 
   # Update every editor view with results
   updateAllEditorViewsWithResults: ->
-    for editorView in atom.workspaceView.getEditorViews()
+    for editor in atom.workspace.getTextEditors()
+      editorView = atom.views.getView(editor)
       editorView.flowController?.resultsUpdated()
 
   typeAtPos: ({bufferPt, fileName, text, onResult}) ->
