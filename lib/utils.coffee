@@ -3,11 +3,12 @@ path = require 'path'
 isFlowSource = (editor) ->
   buffer = editor.getBuffer()
   fname = buffer.getUri()
+  isFlow = false
   if path.extname(fname) in ['.js', '.jsx']
-    if buffer.lineForRow(0).match(/@flow/)
-      return true
-    return false
-  return false
+    if buffer.lineForRow(buffer.nextNonBlankRow -1).match(/\/\*/)
+      buffer.scan /\/\*(.|\n)*?\*\//, (scan) =>
+        isFlow = true if scan.matchText.match(/@flow/)
+  return isFlow
 
 # pixel position from mouse event
 pixelPositionFromMouseEvent = (editor, event) ->
