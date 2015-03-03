@@ -12,4 +12,6 @@ describe 'is Flow source check', ->
       editor.setText test.text
       expect(utils.isFlowSource editor).toEqual test.match
   it 'should handle an empty buffer', ->
-    expect(utils.isFlowSource atom.workspace.getActiveTextEditor()).toEqual false
+    editor = atom.workspace.getActiveTextEditor()
+    editor.setText ""
+    expect(utils.isFlowSource editor).toEqual false

@@ -5,12 +5,15 @@ utilFlowCommand = require './util-flow-command'
 module.exports =
   selector: '.source.js, .source.jsx'
   blacklist: '.source.js .comment'
+  providerblacklist: "autocomplete-plus-fuzzyprovider": '.source.js, .source.jsx'
   requestHandler: (options) ->
     editor = atom.workspace.getActiveTextEditor()
-    return unless isFlowSource editor
+    return [] unless isFlowSource editor
     bufferPt = editor.getCursorBufferPosition()
     selection = editor.getLastSelection()
     prefix = options.prefix
+    return [] unless /\S/.test(prefix)
+    prefix = "" if prefix is "."
     results = utilFlowCommand.autocompleteSync
       bufferPt: bufferPt
       fileName: editor.getPath()

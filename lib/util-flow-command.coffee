@@ -4,7 +4,7 @@ path = require 'path'
 
 getFlowCommand = ->
   #TODO Can we do better than this?
-  if atom.config.get('ide-flow.flowPath') is ""
+  if not atom.config.get('ide-flow.flowPath')
     _flowCommand = spawnSync('which', ['flow']).stdout.toString()
     if _flowCommand is ""
       console.error "Could not find a 'flow' binary on your PATH, go to package settings and set 'Flow Path'"
@@ -55,7 +55,7 @@ module.exports =
     process = run
       args: [ 'server', '--lib', 'lib' ]
       cwd: dir
-      onMessage: (output) ->
+      onMessage: (output) -> console.log(output)
     process
 
   check: ({fileName, onResult, onComplete, onFailure, onDone})->
