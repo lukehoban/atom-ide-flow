@@ -4,27 +4,37 @@ path = require 'path'
 
 getFlowCommand = ->
   #TODO Can we do better than this?
-  if not atom.config.get('ide-flow.flowPath')
-    _flowCommand = spawnSync('which', ['flow']).stdout.toString()
+  flowPath = atom.config.get('ide-flow.flowPath').trim()
+  if not flowPath
+    _flowCommand = spawnSync('which', ['flow']).stdout.toString().trim()
     if _flowCommand is ""
       console.error "Could not find a 'flow' binary on your PATH, go to package settings and set 'Flow Path'"
     else
       atom.config.set 'ide-flow.flowPath', _flowCommand
-  return atom.config.get('ide-flow.flowPath').trim()
+      plowPath = _flowCommand
+  return flowPath
 
 run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
   options = if cwd then { cwd: cwd } else {}
 
-  bufferedprocess = new BufferedProcess
-    command: getFlowCommand()
-    args: args
-    options: options
-    stdout: (data) ->
-      console.debug data
-      onMessage data
-    stderr: (data) ->
-      console.debug data
-    exit: -> onComplete?()
+  try
+    bufferedprocess = new BufferedProcess
+      command: getFlowCommand()
+      args: args
+      options: options
+      stdout: (data) ->
+        console.debug data
+        onMessage data
+      stderr: (data) ->
+        console.debug data
+      exit: -> onComplete?()
+  catch error
+    console.error "Flow utility not found.  Set the Flow Path in package settings."
+    atom.confirm
+      message:"Flow command not found"
+      detailedMessage:"The flow command was not found.  Set the Flow Path in package settings found in Atom -> Preferences -> Packages -> ide-flow -> Settings -> Flow Path to the full path to your installation of flow."
+    onFailure?()
+    return
 
   if input
     bufferedprocess.process.stdin.end(input)
@@ -32,7 +42,7 @@ run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
   # on error hack (from http://discuss.atom.io/t/catching-exceptions-when-using-bufferedprocess/6407)
   bufferedprocess.process.on 'error', (node_error) ->
     # TODO this error should be in output view log tab
-    console.error "Flow utility not found.  Set the Flow Path in package settings."
+    console.error ("Errow running flow utility: " + node_error)
     onFailure?()
 
   bufferedprocess
