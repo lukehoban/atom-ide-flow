@@ -4,7 +4,6 @@
 // for a full listing of what's available.
 @import "octicon-utf-codes";
 @import "ui-variables";
-@import "tooltips";
 
 @error-color: #b22222;
 atom-text-editor::shadow {
@@ -33,18 +32,6 @@ atom-text-editor::shadow {
 }
 
 .ide-flow-tooltip {
-  .tooltip .tooltip-inner;
-
-  position: absolute;
-  z-index:100;
-  padding: 5px 8px 3px 8px;
   font-family: Consolas, monospace;
-  font-size: 9pt;
-  line-height: 12pt;
-  text-align: left;
-  white-space: pre;
-
-  &:empty {
-    display: none;
-  }
+  white-space: pre !important;
 }
