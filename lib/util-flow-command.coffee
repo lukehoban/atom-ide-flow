@@ -6,8 +6,8 @@ getFlowCommand = ->
   #TODO Can we do better than this?
   flowPath = atom.config.get('ide-flow.flowPath').trim()
   if not flowPath
-    _flowCommand = spawnSync('which', ['flow']).stdout.toString().trim()
-    if _flowCommand is ""
+    _flowCommand = spawnSync('which', ['flow']).stdout?.toString().trim()
+    if _flowCommand
       console.error "Could not find a 'flow' binary on your PATH, go to package settings and set 'Flow Path'"
     else
       atom.config.set 'ide-flow.flowPath', _flowCommand
@@ -29,10 +29,7 @@ run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
         console.debug data
       exit: -> onComplete?()
   catch error
-    console.error "Flow utility not found.  Set the Flow Path in package settings."
-    atom.confirm
-      message:"Flow command not found"
-      detailedMessage:"The flow command was not found.  Set the Flow Path in package settings found in Atom -> Preferences -> Packages -> ide-flow -> Settings -> Flow Path to the full path to your installation of flow."
+    warnFlowNotFound()
     onFailure?()
     return
 
@@ -53,8 +50,16 @@ runSync = ({args, cwd, input}) ->
       options.input = input
 
     done = spawnSync getFlowCommand(), args, options
-    console.debug done?.stdout.toString()
+    warnFlowNotFound() if not done?.stdout
+
+    console.debug done?.stdout?.toString()
     done?.stdout
+
+warnFlowNotFound = () ->
+  console.error "Flow utility not found.  Set the Flow Path in package settings."
+  atom.confirm
+    message:"Flow command not found"
+    detailedMessage:"The flow command was not found.  Set the Flow Path in package settings found in Atom -> Preferences -> Packages -> ide-flow -> Settings -> Flow Path to the full path to your installation of flow."
 
 module.exports =
 
@@ -111,4 +116,4 @@ module.exports =
       cwd: path.dirname fileName
       input: text
     result = JSON.parse output
-    result
+    result || []
