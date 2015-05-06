@@ -20,7 +20,7 @@ module.exports =
     atom.workspaceView.off 'ide-flow:check'
 
   provide: ->
-    return {providers: [require './flow-autocomplete-provider']}
+    require './flow-autocomplete-provider'
 
   configDefaults:
     checkOnFileSave: true,
