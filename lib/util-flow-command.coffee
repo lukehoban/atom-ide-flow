@@ -44,17 +44,6 @@ run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
 
   bufferedprocess
 
-runSync = ({args, cwd, input}) ->
-    options = if cwd then { cwd: cwd } else {}
-    if input
-      options.input = input
-
-    done = spawnSync getFlowCommand(), args, options
-    warnFlowNotFound() if not done?.stdout
-
-    console.debug done?.stdout?.toString()
-    done?.stdout
-
 warnFlowNotFound = () ->
   console.error "Flow utility not found.  Set the Flow Path in package settings."
   atom.confirm
@@ -109,11 +98,3 @@ module.exports =
       onMessage: (output) ->
         result = JSON.parse output
         onResult (result || [])
-
-  autocompleteSync: ({fileName, bufferPt, text}) ->
-    output = runSync
-      args: ['autocomplete', fileName, bufferPt.row + 1, bufferPt.column + 1, '--json']
-      cwd: path.dirname fileName
-      input: text
-    result = JSON.parse output
-    result || []
