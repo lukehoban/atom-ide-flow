@@ -108,7 +108,7 @@ module.exports =
       input: text
       onMessage: (output) ->
         result = JSON.parse output
-        onResult result
+        onResult (result || [])
 
   autocompleteSync: ({fileName, bufferPt, text}) ->
     output = runSync
