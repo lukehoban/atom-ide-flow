@@ -8,10 +8,11 @@ getFlowCommand = ->
   if not flowPath
     _flowCommand = spawnSync('which', ['flow']).stdout?.toString().trim()
     if _flowCommand
-      console.error "Could not find a 'flow' binary on your PATH, go to package settings and set 'Flow Path'"
-    else
       atom.config.set 'ide-flow.flowPath', _flowCommand
-      plowPath = _flowCommand
+      plowPath = _flowCommand      
+    else
+      console.error "Could not find a 'flow' binary on your PATH, go to package settings and set 'Flow Path'"
+
   return flowPath
 
 run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
