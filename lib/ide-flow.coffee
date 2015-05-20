@@ -1,3 +1,5 @@
+statusBarItem = require('./status-bar-item')
+
 _pluginManager = null
 
 module.exports =
@@ -14,10 +16,14 @@ module.exports =
       "ide-flow:goto-def", ->
         _pluginManager.gotoDefinition()
 
+  consumeStatusBar: (statusBar) ->
+    statusBarItem.init(statusBar)
+
   deactivate: ->
     _pluginManager.deactivate()
     _pluginManager = null
     atom.workspaceView.off 'ide-flow:check'
+    statusBarItem.cleanUp()
 
   provide: ->
     require './flow-autocomplete-provider'
