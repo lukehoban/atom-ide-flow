@@ -8,6 +8,9 @@ isFlowSource = (editor) ->
     if buffer.lineForRow(buffer.nextNonBlankRow -1)?.match(/\/\*/)
       buffer.scan /\/\*(.|\n)*?\*\//, (scan) =>
         isFlow = true if scan.matchText.match(/@flow/)
+    if buffer.lineForRow(buffer.nextNonBlankRow -1)?.match(/\/\//)
+      buffer.scan /\/\/(.|\n)*?/, (scan) =>
+        isFlow = true if scan.lineText.match(/@flow/)
   return isFlow
 
 # pixel position from mouse event
