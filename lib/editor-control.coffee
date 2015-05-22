@@ -148,12 +148,13 @@ class EditorControl
     @checkResultTooltip = new TooltipView(rect, foundResult)
 
   showCheckResultByCursorChange: (e) ->
+    statusBarItem.clear()
     row = e.newBufferPosition.row
 
     foundResult = @findCheckResultForRow(row)
 
     if !foundResult
-      statusBarItem.clear()
+      return
     else
       statusBarItem.setText(foundResult)
 
