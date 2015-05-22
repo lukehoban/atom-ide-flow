@@ -22,7 +22,13 @@ module.exports =
   provide: ->
     require './flow-autocomplete-provider'
 
-  configDefaults:
-    checkOnFileSave: true,
-    expressionTypeInterval: 300
-    flowPath: ""
+  config:
+    checkOnFileSave:
+      type: 'boolean'
+      default: true
+    expressionTypeInterval:
+      type: 'integer'
+      default: 300
+    flowPath:
+      type: 'string'
+      default: ''
