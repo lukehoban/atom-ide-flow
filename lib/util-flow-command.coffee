@@ -37,7 +37,7 @@ run = ({onMessage, onComplete, onFailure, args, cwd, input}) ->
     bufferedprocess.process.stdin.end(input)
 
   # on error hack (from http://discuss.atom.io/t/catching-exceptions-when-using-bufferedprocess/6407)
-  bufferedprocess.process.on 'error', (node_error) ->
+  bufferedprocess.process?.on 'error', (node_error) ->
     # TODO this error should be in output view log tab
     console.error ("Errow running flow utility: " + node_error)
     onFailure?()
