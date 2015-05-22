@@ -4,6 +4,7 @@ $ = require 'jquery'
 {Subscriber} = require 'emissary'
 {TooltipView} = require './tooltip-view'
 {isFlowSource, pixelPositionFromMouseEvent, screenPositionFromMouseEvent, getElementsByClass} = require './utils'
+statusBarItem = require './status-bar-item'
 
 class EditorControl
   constructor: (@editor, @manager) ->
@@ -41,11 +42,15 @@ class EditorControl
 
     # mouse movement over gutter to show check results
     @subscriber.subscribe @gutter, 'mouseenter', ".ide-flow-error", (e) =>
-      @showCheckResult e
+      @showCheckResultByMouseEvent e
     @subscriber.subscribe @gutter, 'mouseleave', ".ide-flow-error", (e) =>
       @hideCheckResult()
     @subscriber.subscribe @gutter, 'mouseleave', (e) =>
       @hideCheckResult()
+
+    # cursor movements show check results when appropriate
+    @disposables.add @editor.onDidChangeCursorPosition (e) =>
+      @showCheckResultByCursorChange e
 
     atom.commands.dispatch atom.views.getView(atom.workspace), 'ide-flow:check'
 
@@ -123,17 +128,11 @@ class EditorControl
     @editor.decorateMarker marker, type: 'line', class: 'ide-flow-error'
 
     # show check result when mouse over gutter icon
-  showCheckResult: (e) ->
+  showCheckResultByMouseEvent: (e) ->
     @hideCheckResult()
     row = @editor.bufferPositionForScreenPosition(screenPositionFromMouseEvent(@editor, e)).row
 
-    # find best result for row
-    foundResult = null
-    for {marker, desc} in @checkMarkers
-      if marker.getHeadBufferPosition().row is row
-        foundResult = desc
-        break
-
+    foundResult = @findCheckResultForRow(row)
     # append tooltip if result found
     return unless foundResult?
 
@@ -147,6 +146,24 @@ class EditorControl
       bottom: targetRect.bottom + offset
 
     @checkResultTooltip = new TooltipView(rect, foundResult)
+
+  showCheckResultByCursorChange: (e) ->
+    row = e.newBufferPosition.row
+
+    foundResult = @findCheckResultForRow(row)
+
+    if !foundResult
+      statusBarItem.clear()
+    else
+      statusBarItem.setText(foundResult)
+
+  findCheckResultForRow: (row) ->
+    foundResult = null
+    for {marker, desc} in @checkMarkers
+      if marker.getHeadBufferPosition().row is row
+        foundResult = desc
+        break
+    return foundResult
 
   hideCheckResult: ->
     if @checkResultTooltip?
