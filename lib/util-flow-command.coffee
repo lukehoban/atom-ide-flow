@@ -9,7 +9,7 @@ getFlowCommand = ->
     _flowCommand = spawnSync('which', ['flow']).stdout?.toString().trim()
     if _flowCommand
       atom.config.set 'ide-flow.flowPath', _flowCommand
-      plowPath = _flowCommand      
+      flowPath = _flowCommand      
     else
       console.error "Could not find a 'flow' binary on your PATH, go to package settings and set 'Flow Path'"
 
