@@ -12,8 +12,8 @@ module.exports =
   disableForSelector: '.source.js .comment'
   getSuggestions: ({editor, bufferPosition, prefix}) ->
     new Promise (resolve) ->
-      return [] unless isFlowSource editor
-      return [] unless /\S/.test(prefix)
+      return resolve [] unless isFlowSource editor
+      return resolve [] unless /\S/.test(prefix)
       prefix = "" if prefix is "."
       utilFlowCommand.autocomplete
         bufferPt: bufferPosition
