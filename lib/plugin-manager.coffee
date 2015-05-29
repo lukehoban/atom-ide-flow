@@ -16,11 +16,10 @@ class PluginManager
       editorView = atom.views.getView(editor)
       editorView.flowController?.deactivate()
       editorView.flowController = null
-    @controlSubscription?.off()
-    @controlSubscription = null
+    @controlSubscription?.dispose()
 
   gotoDefinition: ->
-    editor = atom.workspace.getActiveEditor()
+    editor = atom.workspace.getActiveTextEditor()
     bufferPt = editor.getCursorBufferPosition()
     utilFlowCommand.getDef
       bufferPt: bufferPt

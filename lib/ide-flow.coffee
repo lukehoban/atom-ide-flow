@@ -17,7 +17,6 @@ module.exports =
   deactivate: ->
     _pluginManager.deactivate()
     _pluginManager = null
-    atom.workspaceView.off 'ide-flow:check'
 
   provide: ->
     require './flow-autocomplete-provider'
