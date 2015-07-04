@@ -63,13 +63,14 @@ module.exports =
       onMessage: (output) -> console.log(output)
     process
 
-  check: ({fileName, onResult, onComplete, onFailure, onDone})->
+  check: ({fileName, bufferPt, text, onResult, onComplete, onFailure, onDone})->
     dir = path.dirname fileName
     if !@servers then @servers = {}
     if !@servers[dir] then @servers[dir] = @startServer()
     process = run
-      args: [ '--json' ]
-      cwd: dir
+      args: [ 'check-contents', fileName, '--json' ]
+      cwd: path.dirname fileName
+      input: text
       onMessage: (output) ->
         result = JSON.parse output
         onResult result
