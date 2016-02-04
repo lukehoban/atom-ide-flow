@@ -21,7 +21,7 @@ module.exports =
         text: editor.getText()
         onResult: (results) =>
           console.log results
-          filteredResults = fuzzaldrin.filter results, prefix, key: "name"
+          filteredResults = fuzzaldrin.filter results.result, prefix, key: "name"
           suggestions = []
           for result in filteredResults
             suggestions.push
