@@ -73,9 +73,16 @@ class EditorControl
     pixelPt = pixelPositionFromMouseEvent(@editor, e)
     screenPt = @editor.screenPositionForPixelPosition(pixelPt)
     bufferPt = @editor.bufferPositionForScreenPosition(screenPt)
+
     nextCharPixelPt = @editorView.pixelPositionForBufferPosition([bufferPt.row, bufferPt.column + 1])
 
-    return if pixelPt.left >= nextCharPixelPt.left
+    # New way to get bufferpt under cursor
+    # see: https://github.com/atom/atom/issues/7193
+    # solution see: https://discuss.atom.io/t/getting-buffer-position-from-mouse-event-broken-when-scrolling/19804
+    {row,column} = this.editorView.component.screenPositionForMouseEvent(e)
+    console.log("cursor:",[row,column])
+
+    # return if pixelPt.left >= nextCharPixelPt.left
 
     # find out show position
     offset = @editor.getLineHeightInPixels() * 0.7
@@ -89,7 +96,7 @@ class EditorControl
     @exprTypeTooltip = new TooltipView(tooltipRect)
 
     @manager.typeAtPos
-      bufferPt: bufferPt
+      bufferPt: {row:row,column:column}
       fileName: @editor.getPath()
       text: @editor.getText()
       onResult: (result) =>
