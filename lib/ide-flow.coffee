@@ -22,6 +22,9 @@ module.exports =
     require './flow-autocomplete-provider'
 
   config:
+    checkAllFiles:
+      type: 'boolean'
+      default: false
     checkOnFileSave:
       type: 'boolean'
       default: true
