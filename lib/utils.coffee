@@ -5,6 +5,8 @@ isFlowSource = (editor) ->
   fname = buffer.getUri()
   isFlow = false
   if path.extname(fname) in ['.js', '.jsx']
+    if atom.config.get('ide-flow.checkAllFiles')
+      isFlow = true
     if buffer.lineForRow(buffer.nextNonBlankRow -1)?.match(/\/\*/)
       buffer.scan /\/\*(.|\n)*?\*\//, (scan) =>
         isFlow = true if scan.matchText.match(/@flow/)
